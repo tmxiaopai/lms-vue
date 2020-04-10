@@ -2,12 +2,12 @@
   <div>
     <div class="createBtn">
       <el-row>
-        <el-button @click="saveNotice" type="info">新建公告</el-button>
+        <el-button @click="saveNotice" type="info">新建联系人信息</el-button>
       </el-row>
     </div>
     <el-table :data="notices" height="650" border>
       <el-table-column fixed type="index" width="50" label="序号"></el-table-column>
-<!--      <el-table-column fixed prop="noticeId" label="公告ID"></el-table-column>-->
+      <!--      <el-table-column fixed prop="noticeId" label="公告ID"></el-table-column>-->
       <el-table-column fixed prop="noticeName" sortable label="公告标题"></el-table-column>
       <el-table-column prop="noticeContent" label="公告内容"></el-table-column>
       <el-table-column prop="noticeDate" label="发布时间" sortable></el-table-column>
@@ -45,7 +45,7 @@
 
 <script>
   export default {
-    name: "NoticeList",
+    name: "ContactList",
     data() {
       return {
         drawer: false,
@@ -53,7 +53,6 @@
         loading:false,
         timer:null,
         selectNot: {
-          noticeId:'',
           noticeName: '',
           noticeContent: ''
         },
@@ -80,7 +79,7 @@
           cancelButtonText: '取消',
           type:'warning'
         }).then(()=>{
-          axios.post('deleteNotice',sNo.noticeId).then(_=>{
+          axios.post('deleteNotice',sNo.noticeId).then(res=>{
             this.notices.splice(index,1);
             this.$message({
               type: "success",

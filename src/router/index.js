@@ -47,6 +47,11 @@ const router = new Router({
           path: '/projectList',
           name: 'ProjectList',
           component: () => import("../views/ProjectList")
+        },
+        {
+          path: '/userList',
+          name: 'UserList',
+          component: () => import("../views/UserList")
         }
       ]
     }

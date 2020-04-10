@@ -5,15 +5,22 @@
 </template>
 
 <script>
-export default {
-  name: 'App'
-}
+  export default {
+    name: 'App'
+  }
 </script>
 
 <style lang="stylus">
-html
-  height 100%
-  #app{
-    font-family:  Helvetica,"Microsoft YaHei UI";
+  #app {
+    font-family Helvetica, "Microsoft YaHei UI";
+  }
+  .createBtn{
+    margin-bottom 20px
+  }
+  .drawer-body{
+    margin-left 50px
+    .el-button{
+      margin-left  85px
+    }
   }
 </style>

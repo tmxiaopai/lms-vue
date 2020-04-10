@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div id="searchBox">
+    <div class="createBtn">
       <el-row>
         <el-button type="info">新建</el-button>
         <el-autocomplete :fetch-suggestions="searchProject" placeholder="请输入项目名称"
@@ -42,7 +42,7 @@
       custom-class="demo-drawer"
       ref="myDrawer"
     >
-      <div class="demo-drawer__content">
+      <div class="drawer-body">
         <el-form ref="myForm" :model="selectPro" label-width="80px">
           <el-form-item label="项目编号">
             <el-input v-model="selectPro.projectNum"></el-input>
@@ -107,7 +107,7 @@
       }
     },
     props: {
-      projects: Array
+      //projects: Array
     },
     methods: {
       handleEdit(index, row) {
@@ -170,10 +170,7 @@
 </script>
 
 <style lang="stylus" scoped>
-  #searchBox {
-    margin-bottom: 20px;
-  }
   .el-input{
-
+    width 400px
   }
 </style>

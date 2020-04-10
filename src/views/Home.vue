@@ -2,6 +2,7 @@
   <el-container>
     <el-header>
       <div id="logo-info">电梯业务管理系统</div>
+      <span>您好，{{userName}} 现在的时间为{{currentTime}}</span>
       <el-button type="info" @click="logout">退出</el-button>
     </el-header>
     <el-container>
@@ -43,14 +44,27 @@
     name: "Home",
     data() {
       return {
+        currentTime:new Date(),
+        timer:null,
         opened: true,
         isCollapse: false,
         isTransition: false,
-        menuList: []
+        menuList: [],
+        userName:''
       }
     },
     created() {
       this.getMenuList()
+      this.userName=sessionStorage.getItem('userName')
+      var that =this
+      this.timer = setInterval(function(){
+        that.currentTime=new Date()
+      },1000)
+    },
+    beforeDestroy() {
+      if(this.timer){
+        clearInterval(this.timer)
+      }
     },
     props: {},
     components: {},
@@ -96,7 +110,7 @@
     background-color: rgb(84, 92, 100);
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items center;
     color white
   }
 
@@ -105,8 +119,8 @@
   }
 
   .el-aside {
-    background-color: #cac6c6;
-
+    background-color: rgb(84, 92, 100);
+height 900px;
     .el-menu {
       border-right none
     }

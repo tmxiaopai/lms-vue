@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div id="searchBox">
+    <div class="createBtn">
       <el-row>
         <el-button type="info" @click="keepSave">新建</el-button>
         <el-autocomplete :fetch-suggestions="searchCustomer" placeholder="请输入客户名称"
@@ -42,7 +42,7 @@
       custom-class="demo-drawer"
       ref="Drawer"
     >
-      <div class="demo-drawer__content">
+      <div class="drawer-body">
         <el-form ref="myForm" :model="selectCus" label-width="80px">
           <el-form-item label="客户名称">
             <el-input v-model="selectCus.customerName"></el-input>
@@ -85,7 +85,7 @@
       custom-class="demo-drawer"
       ref="myDrawer"
     >
-      <div class="demo-drawer__content">
+      <div class="drawer-body">
         <el-form ref="myForm" :model="selectCus" label-width="80px">
           <el-form-item label="客户名称">
             <el-input v-model="selectCus.customerName"></el-input>
@@ -163,7 +163,7 @@
         this.drawer = true
       },
       handleDelete(index, row) {
-        var sCustomer=row
+        const sCustomer = row;
         this.$confirm('此操作将删除该记录, 是否继续?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
@@ -234,7 +234,6 @@
               setTimeout(() => {
                 this.loading = false;
                 this.$message.success(flagInsert)
-                this.selectCus.customerNum = this.customers.length + 1
                 this.customers.push(this.selectCus)
                 this.selectCus = null
                 this.refreshCustomers()
@@ -270,8 +269,7 @@
   #searchBox {
     margin-bottom: 20px;
   }
-
-  .el-input {
-
+  .el-input{
+    width 400px
   }
 </style>

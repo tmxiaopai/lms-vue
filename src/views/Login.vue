@@ -6,7 +6,7 @@
     </span>
       <h2 class="title" style="padding-left:22px;">系统登录</h2>
       <el-form-item prop="userNum">
-        <el-input type="text" v-model="loginForm.userNum" placeholder="账号"></el-input>
+        <el-input type="text" v-model.number="loginForm.userNum" placeholder="账号"></el-input>
       </el-form-item>
       <el-form-item prop="password">
         <el-input type="password" v-model="loginForm.password" placeholder="密码" show-password></el-input>
@@ -36,6 +36,7 @@
 
 <script>
   import Cookies from 'js-cookie'
+
   export default {
     name: 'Login',
     data() {
@@ -46,12 +47,12 @@
           userNum: '',
           password: '',
           captcha: '',
-          src:'http://localhost:8005/captcha.jpg'
+          src: 'http://localhost:8005/captcha.jpg'
         },
         rules: {
           userNum: [
-            {required: true, message: '请输入工号', trigger: 'blur'},
-            {min: 4, max: 8, message: '长度在 4 到 8 个字符', trigger: 'blur'}
+            {required: true, message: '工号不能为空'},
+            {type: 'number', message: '工号为数字', trigger: 'blur'}
           ],
           password: [
             {required: true, message: '请输入密码', trigger: 'blur'},
@@ -69,18 +70,21 @@
           captcha: this.loginForm.captcha
         }
         axios.post('/login', userInfo).then((res) => {
-          console.log(res);
-          if (res.data.msg != null) {
+          console.log(res.data);
+          if (res.data.msg != "登录成功") {
             this.loading = false
             this.$message({message: res.data.msg, type: 'error'})
           } else {
-            this.$message("登录成功")
+            this.$message({
+              type: "success",
+              message: res.data.msg
+            })
             Cookies.set('token', res.data.token) //设置cookie中的token
             sessionStorage.setItem('userNum', res.data.user.userNum)//保存本地内容
-            sessionStorage.setItem('userName',res.data.user.userName)
-            sessionStorage.setItem('userId',res.data.user.userId)
-            sessionStorage.setItem('token',res.data.token)
-            this.$store.commit('menuRouteLoaded',false)//重新加载导航菜单
+            sessionStorage.setItem('userName', res.data.user.userName)
+            sessionStorage.setItem('userId', res.data.user.userId)
+            sessionStorage.setItem('token', res.data.token)
+            this.$store.commit('menuRouteLoaded', false)//重新加载导航菜单
             this.$router.push('/home')
           }
           this.loading = false
@@ -90,7 +94,7 @@
         this.$refs.loginForm.resetFields()
       },
       refreshCaptcha: function () {
-        this.loginForm.src = "http://localhost:8005/captcha.jpg?t="+ + new Date().getTime()//this.global.baseUrl + "/captcha.jpg?t=" + new Date().getTime();
+        this.loginForm.src = "http://localhost:8005/captcha.jpg?t=" + +new Date().getTime()//this.global.baseUrl + "/captcha.jpg?t=" + new Date().getTime();
       }
     }
   }
