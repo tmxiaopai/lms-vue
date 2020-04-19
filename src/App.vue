@@ -23,4 +23,14 @@
       margin-left  85px
     }
   }
+
+  .create-btn {
+    margin-top: 20px;
+  }
+  .page-title{
+
+  }
+  .btn-bottom {
+    margin-top 50px
+  }
 </style>

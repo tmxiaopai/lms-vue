@@ -11,7 +11,10 @@
       <el-table-column label="员工名" prop="userName" fixed sortable></el-table-column>
       <el-table-column label="手机" prop="userPhone"></el-table-column>
       <el-table-column label="邮箱" prop="userEmail"></el-table-column>
-      <el-table-column label="最后登录时间" prop="userLastLoginTime" sortable></el-table-column>
+      <el-table-column label="身份" prop="roleName"></el-table-column>
+      <el-table-column label="最后登录时间" prop="userLastLoginTime" sortable>
+        <template slot-scope="scope">{{scope.row.userLastLoginTime|dateFormat}}</template>
+      </el-table-column>
 <!--      <el-table-column label="用户状态" prop="userStatus"></el-table-column>-->
       <el-table-column label="操作" width="150">
         <template slot-scope="scope">
@@ -63,11 +66,11 @@
     </el-drawer>
 
     <el-drawer
-      title="新建用户"
+      title="修改用户"
       :before-close="updateClose"
       :visible="updateF"
       direction="rtl"
-      ref="SaveU">
+      ref="UpdateD">
       <div class="drawer-body">
         <el-form ref="saveForm" :rules="rules" :model="selectUser">
           <el-form-item label="工号">
@@ -118,16 +121,6 @@
         timerS: null,
         timerU: null,
         roleId: '',
-        roles: [
-          {
-            roleId: '1',
-            roleName: '你好'
-          },
-          {
-            roleId: '2',
-            roleName: '你好'
-          }
-        ],
         users: [],
         selectUser: {
           userId: '',
@@ -140,7 +133,8 @@
           userCreateTime: '',
           userLastLoginTime: '',
           userUpdateTime: '',
-          userStatus: ''
+          userStatus: '',
+          roleName:''
         },
         rules: {}
       }
@@ -212,9 +206,10 @@
                 });
               }).catch(err => {
                 console.log(err);
-              })
+              });
             }
           });
+          this.users.push(this.selectUser);
           this.loadingS = false;
           this.saveF=false;
           this.refreshUserList()

@@ -3,13 +3,11 @@
     <div class="createBtn">
       <el-row>
         <el-button type="info" @click="keepSave">新建</el-button>
-        <el-autocomplete :fetch-suggestions="searchCustomer" placeholder="请输入客户名称"
-                         @select="handleSelect"></el-autocomplete>
       </el-row>
     </div>
     <el-table :data="customers" style="width: 100%" height="650" border>
       <el-table-column fixed type="index" width="50" label="序号"></el-table-column>
-      <el-table-column fixed prop="customerNum" width="110" label="客户编号" sortable></el-table-column>
+<!--      <el-table-column fixed prop="customerNum" width="110" label="客户编号" sortable></el-table-column>-->
       <el-table-column fixed prop="customerName" label="客户名称" sortable></el-table-column>
       <el-table-column prop="customerPhone" width="110" label="客户电话"></el-table-column>
       <el-table-column prop="customerPortraition" width="110" label="客户传真"></el-table-column>
@@ -39,7 +37,6 @@
       :before-close="saveClose"
       :visible.sync="save"
       direction="ltr"
-      custom-class="demo-drawer"
       ref="Drawer"
     >
       <div class="drawer-body">
@@ -70,7 +67,7 @@
           </el-form-item>
         </el-form>
         <div class="demo-drawer__footer">
-          <el-button @click="cancelForm">取 消</el-button>
+          <el-button @click="cancelSave">取 消</el-button>
           <el-button type="primary" @click="$refs.Drawer.closeDrawer()" :loading="loading">{{ loading === true ? "提交中..." : "保存" }}
           </el-button>
         </div>
@@ -82,13 +79,12 @@
       :before-close="updateClose"
       :visible.sync="drawer"
       direction="rtl"
-      custom-class="demo-drawer"
       ref="myDrawer"
     >
       <div class="drawer-body">
         <el-form ref="myForm" :model="selectCus" label-width="80px">
           <el-form-item label="客户名称">
-            <el-input v-model="selectCus.customerName"></el-input>
+            <el-input v-model="selectCus.customerName" disabled ></el-input>
           </el-form-item>
           <el-form-item label="客户电话">
             <el-input v-model="selectCus.customerPhone"></el-input>
@@ -113,7 +109,7 @@
           </el-form-item>
         </el-form>
         <div class="demo-drawer__footer">
-          <el-button @click="cancelForm">取 消</el-button>
+          <el-button @click="cancelUpdate">取 消</el-button>
           <el-button type="primary" @click="$refs.myDrawer.closeDrawer()" :loading="loading1">{{ loading1 === true ?
             "提交中 ..." : "修改" }}
           </el-button>
@@ -128,9 +124,6 @@
     name: "CustomerList",
     data() {
       return {
-        formLabelWidth: '80px',
-        timer: null,
-        timer1: null,
         loading: false,
         loading1: false,
         save: false,
@@ -163,13 +156,12 @@
         this.drawer = true
       },
       handleDelete(index, row) {
-        const sCustomer = row;
         this.$confirm('此操作将删除该记录, 是否继续?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          axios.post('deleteCustomer',sCustomer.customerNum).then(res=>{
+          axios.post('deleteCustomer',row.customerNum).then(res=>{
             this.customers.splice(index, 1)
             this.$message({
               type: 'success',
@@ -190,26 +182,20 @@
         });
       },
       updateClose(done) {
-        var sCustomer = this.selectCus
         if (this.loading1) {
           return;
         }
         this.$confirm('确定要提交表单吗？')
           .then(_ => {
             this.loading1 = true;
-            var mesOk = null
-            axios.post('updateCustomer', sCustomer).then(res => {
+            let mesOk = null;
+            axios.post('updateCustomer', this.selectCus).then(res => {
               mesOk = res.data
-            })
-            this.timer1 = setTimeout(() => {
-              done();
-              // 动画关闭需要一定的时间
-              setTimeout(() => {
-                this.loading1 = false
-                this.$message.success(mesOk)
-                this.refreshCustomers()
-              }, 400);
-            }, 2000);
+            });
+            done();
+            this.loading1 = false
+            this.$message.success(mesOk)
+            this.refreshCustomers()
           })
           .catch(_ => {
           });
@@ -224,43 +210,33 @@
         this.$confirm('确定要提交表单吗？')
           .then(_ => {
             this.loading = true;
-            var flagInsert = null
               axios.post('insertCustomer', this.selectCus).then(res => {
-              flagInsert = res.data
-            })
-            this.timer = setTimeout(() => {
-              done();
-              // 动画关闭需要一定的时间
-              setTimeout(() => {
-                this.loading = false;
-                this.$message.success(flagInsert)
-                this.customers.push(this.selectCus)
-                this.selectCus = null
-                this.refreshCustomers()
-              }, 400);
-            }, 2000);
+                this.$message.success(res.data);
+
+            });
+
+
+            this.customers.push(this.selectCus);
+            this.loading = false;
+            this.saveF=false;
+            done();
           })
           .catch(_ => {
           });
+
+        this.refreshCustomers()
       },
-      cancelForm() {
+      cancelSave() {
         this.loading = false;
         this.save = false;
-        clearTimeout(this.timer);
+      },
+      cancelUpdate(){
         this.loading1 = false;
         this.drawer = false;
-        clearTimeout(this.timer1);
-      },
-      handleSelect() {
-      },
-      searchCustomer() {
       },
     },
     mounted() {
       this.refreshCustomers();
-    },
-    watch() {
-
     }
   }
 </script>

@@ -44,25 +44,25 @@
     name: "Home",
     data() {
       return {
-        currentTime:new Date(),
-        timer:null,
+        currentTime: new Date(),
+        timer: null,
         opened: true,
         isCollapse: false,
         isTransition: false,
         menuList: [],
-        userName:''
+        userName: ''
       }
     },
     created() {
       this.getMenuList()
-      this.userName=sessionStorage.getItem('userName')
-      var that =this
-      this.timer = setInterval(function(){
-        that.currentTime=new Date()
-      },1000)
+      this.userName = sessionStorage.getItem('userName')
+      var that = this
+      this.timer = setInterval(function () {
+        that.currentTime = new Date()
+      }, 1000)
     },
     beforeDestroy() {
-      if(this.timer){
+      if (this.timer) {
         clearInterval(this.timer)
       }
     },
@@ -86,7 +86,7 @@
         })
       },
       handleMenu(menu) {
-          this.$router.push(menu.permissionUrl)
+        this.$router.push(menu.permissionUrl)
       }
     }
   }
@@ -120,7 +120,9 @@
 
   .el-aside {
     background-color: rgb(84, 92, 100);
-height 900px;
+    height 890px;
+    width 300px
+
     .el-menu {
       border-right none
     }

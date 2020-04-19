@@ -24,7 +24,7 @@ _axios.interceptors.request.use(
     let token =Cookies.get('token')
     if(token){
       config.headers.token=token//此处的token方法 token=token
-      console.log(token);
+      //console.log(token);
       console.log(config);
     }else {
       //router.push('/login')

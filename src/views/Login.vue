@@ -84,6 +84,7 @@
             sessionStorage.setItem('userName', res.data.user.userName)
             sessionStorage.setItem('userId', res.data.user.userId)
             sessionStorage.setItem('token', res.data.token)
+            sessionStorage.setItem('role',res.data.role)
             this.$store.commit('menuRouteLoaded', false)//重新加载导航菜单
             this.$router.push('/home')
           }

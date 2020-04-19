@@ -1,16 +1,17 @@
 <template>
   <div>
-    <div class="createBtn">
-      <el-row>
-        <el-button @click="saveNotice" type="info">新建公告</el-button>
-      </el-row>
+    <div class="page-title">
+      <el-page-header @back="backGo" content="公告列表"></el-page-header>
     </div>
+    <el-divider></el-divider>
     <el-table :data="notices" height="650" border>
       <el-table-column fixed type="index" width="50" label="序号"></el-table-column>
 <!--      <el-table-column fixed prop="noticeId" label="公告ID"></el-table-column>-->
       <el-table-column fixed prop="noticeName" sortable label="公告标题"></el-table-column>
       <el-table-column prop="noticeContent" label="公告内容"></el-table-column>
-      <el-table-column prop="noticeDate" label="发布时间" sortable></el-table-column>
+      <el-table-column prop="noticeDate" label="发布时间" sortable>
+        <template slot-scope="scope">{{scope.row.noticeDate| dateFormat}}</template>
+      </el-table-column>
       <el-table-column prop="noticeMan" label="发布人" sortable></el-table-column>
       <el-table-column label="操作" width="80">
         <template slot-scope="scope">
@@ -18,6 +19,13 @@
         </template>
       </el-table-column>
     </el-table>
+    <div class="create-btn">
+      <el-row>
+       <el-col :span="2" :offset="22">
+         <el-button @click="saveNotice" type="info">新建公告</el-button>
+       </el-col>
+      </el-row>
+    </div>
 
     <el-drawer
       title="新建公告"
@@ -64,6 +72,9 @@
       }
     },
     methods: {
+      backGo(){
+        this.$router.go(-1)
+      },
       refreshNotices(){
         axios.get('findAllNotice').then(res=>{
           this.notices=res.data
@@ -120,11 +131,13 @@
                 message:saveMes
               });
               this.refreshNotices()
+              this.$refs.MyForm.resetFields()
             },400)
           },1000)
         }).catch(_=>{
 
         })
+
       },
       cancelForm(){
         this.loading=false;

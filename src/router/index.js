@@ -26,32 +26,88 @@ const router = new Router({
       path: '/home',
       name: 'Home',
       component: Home,
-      redirect: '/noticeList',
+      redirect: '/welcome',
       children: [
-        {
-          path: '/noticeList',
-          name: 'NoticeList',
-          component: () => import('../views/NoticeList')
-        },
         {
           path: '/welcome',
           name: 'Welcome',
           component: Welcome
         },
         {
-          path: '/customerList',
-          name: 'CustomerList',
-          component: () => import("../views/CustomerList")
-        },
-        {
-          path: '/projectList',
+          path: '/1',
           name: 'ProjectList',
           component: () => import("../views/ProjectList")
         },
         {
-          path: '/userList',
+          path: '/2',
           name: 'UserList',
           component: () => import("../views/UserList")
+        },
+        {
+          path: '/3',
+          name: 'NoticeList',
+          component: () => import('../views/NoticeList')
+        },
+        {
+          path: '/4',
+          name: 'FaultList',
+          component: () => import('../views/FaultList')
+        },
+        {
+          path: '/5',
+          name: 'VisitPlan',
+          component: () => import('../views/VisitPlan')
+        },
+        {
+          path: '/6',
+          name: 'StockList',
+          component: ()=>import('../views/StockList')
+        },
+        {
+          path: '/7',
+          name: 'DetailLift',
+          component: ()=>import('../views/DetailLift')
+        },
+        {
+          path: '/8',
+          name: 'InstallHT',
+          component: () => import('../views/InstallHT')
+        },
+        {
+          path: '/9',
+          name: 'MaHT',
+          component: () => import('../views/MaHT')
+        },
+        {
+          path: '/10',
+          name: 'CreateProject',
+          component: () => import('../views/CreateProject')
+        },
+        {
+          path: '/11',
+          name: 'SaleHt',
+          component: () => import('../views/SaleHT')
+        },
+        {
+          path: '/12',
+          name: 'StockInOut',
+          component: ()=>import('../views/StockInOut')
+        },
+
+        {
+          path: '/createSaleHT',
+          name: 'CreateSaleHT',
+          component: () => import('../views/CreateSaleHT')
+        },
+        {
+          path: '/createInstallHT',
+          name: 'CreateInstallHT',
+          component: () => import('../views/CreateInstallHT')
+        },
+        {
+          path: '/createMaHT',
+          name: 'CreateMaHT',
+          component: () => import('../views/CreateMaHT')
         }
       ]
     }
