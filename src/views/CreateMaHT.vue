@@ -56,10 +56,10 @@
         <el-col :sm="6">
           <el-form-item label="保养类型" prop="htMStyle">
             <el-select placeholder="请选择保养类型" v-model="selectMa.htMStyle">
-              <el-option label="半月" value="半月"></el-option>
-              <el-option label="月" value="月"></el-option>
-              <el-option label="季" value="季"></el-option>
-              <el-option label="年" value="年"></el-option>
+              <el-option label="半包" value="半包"></el-option>
+              <el-option label="全包" value="全包"></el-option>
+              <el-option label="免保" value="免保"></el-option>
+              <el-option label="标保" value="标保"></el-option>
             </el-select>
           </el-form-item>
         </el-col>
@@ -92,9 +92,16 @@
             </el-date-picker>
           </el-form-item>
         </el-col>
+        <el-col :sm="6">
+          <el-form-item label="维保月数" prop="htMMonth">
+            <el-input-number :min="6" v-model="selectMa.htMMonth"></el-input-number>
+          </el-form-item>
+        </el-col>
+      </el-row>
+      <el-row :gutter="20">
         <el-col :sm="12">
           <el-form-item label="备注" prop="">
-<el-input v-model="selectMa.htMDesc"></el-input>
+            <el-input v-model="selectMa.htMDesc"></el-input>
           </el-form-item>
         </el-col>
       </el-row>
@@ -134,7 +141,8 @@
           htMEndDate: '',
           htMSignDate: '',
           htMDesc: '',
-          htMStatus: ''
+          htMStatus: '0',
+          htMMonth:''
         }
       }
     },
@@ -147,7 +155,19 @@
       backGo() {
         this.$router.go(-1)
       },
-      keepSave(){},
+      keepSave(){
+        console.log(this.selectMa);
+        this.$confirm('确认保存该合同信息吗？','提示').then(_=>{
+          axios.post('insertMaHT',this.selectMa).then(res=>{
+            if(res.data==1){
+              this.$message.success('保存成功');
+              this.$router.go(-1)
+            }else{
+              this.$message.error('出现意外，请刷新页面后重试')
+            }
+          })
+        })
+      },
       cancelSave(){}
     }
 

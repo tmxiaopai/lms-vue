@@ -6,6 +6,7 @@
     <el-divider></el-divider>
     <el-table :data="orders" height="650" border>
       <el-table-column fixed type="index" width="50" label="序号"></el-table-column>
+      <el-table-column prop="faultLift" label="故障电梯"></el-table-column>
       <el-table-column fixed prop="faultDescription" label="故障原因"></el-table-column>
       <el-table-column prop="checkInMan" label="报案人"></el-table-column>
       <el-table-column prop="checkInPhone" width="120" label="报案电话"></el-table-column>
@@ -48,9 +49,12 @@
       direction="ltr"
       ref="Drawer">
       <div class="drawer-body">
-        <el-form ref="myForm" :model="selectOrder">
+        <el-form ref="myForm" :model="selectOrder" label-width="90px">
           <el-form-item label="故障描述">
-            <el-input v-model="selectOrder.faultDescription"></el-input>
+            <el-input type="textarea" style="width: 300px" placeholder="事发地点、故障描述" v-model="selectOrder.faultDescription"></el-input>
+          </el-form-item>
+          <el-form-item label="故障电梯">
+            <el-input v-model="selectOrder.faultLift"></el-input>
           </el-form-item>
           <el-form-item label="登记日期">
             <el-date-picker

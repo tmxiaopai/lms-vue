@@ -36,6 +36,7 @@
           <el-form-item label="合作意向" prop="projectIntention">
             <el-select v-model="selectPro.projectIntention" placeholder="合作意向">
               <el-option label="有合作意向" value="有合作意向"></el-option>
+              <el-option label="意向不明确" value="意向不明确"></el-option>
             </el-select>
           </el-form-item>
         </el-col>
@@ -100,7 +101,7 @@
       </el-row>
       <el-row :gutter="20">
         <el-col :span="2" :offset="4">
-          <el-button type="primary" @click="keepSave">保存</el-button>
+          <el-button type="primary" @click="keepSave('selectPro')">保存</el-button>
         </el-col>
         <el-col :span="2" :offset="4">
           <el-button type="info" @click="cancelSave">取消</el-button>
@@ -181,14 +182,21 @@
       }
     },
     methods: {
-      keepSave() {
-        axios.post('insertProject', this.selectPro).then(res => {
-          this.$message({
-            type: "info",
-            message: res.data
-          });
-          this.$router.push('1')
-        })
+      keepSave(formName) {
+        this.$refs[formName].validate((valid) => {
+          if (valid) {
+            axios.post('insertProject', this.selectPro).then(res => {
+              this.$message({
+                type: "info",
+                message: res.data
+              });
+              this.$router.push('1')
+            })
+          } else {
+            return false;
+          }
+        });
+
       },
       cancelSave() {
         this.$router.go(-1)
@@ -206,7 +214,7 @@
           } else {
             this.$message({
               type: "error",
-              message: "该项目名称重复"
+              message: "该项目名称重复，项目名称不可用"
             })
           }
         })

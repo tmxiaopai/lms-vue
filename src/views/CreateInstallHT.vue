@@ -14,8 +14,8 @@
           </el-form-item>
         </el-col>
         <el-col :sm="6">
-          <el-form-item label="所属项目" prop="pNum">
-            <el-select v-model="selectInstall.pNum" placeholder="请选择项目">
+          <el-form-item label="所属项目" prop="pnum">
+            <el-select v-model="selectInstall.pnum" placeholder="请选择项目">
               <el-option v-for="item in projects" :key="item.projectNum" :label="item.projectName"
                          :value="item.projectNum"></el-option>
             </el-select>
@@ -23,7 +23,7 @@
         </el-col>
         <el-col :sm="6">
           <el-form-item label="合同金额" prop="htInstallMoney">
-            <el-input v-model="selectInstall.htInstallMoney"></el-input>
+            <el-input @blur="computedDPrice" v-model="selectInstall.htInstallMoney"></el-input>
           </el-form-item>
         </el-col>
         <el-col :sm="6">
@@ -121,11 +121,7 @@
       <el-row :gutter="20">
         <el-col :sm="6">
           <el-form-item label="工程周期" prop="htInstallPlanDate">
-            <el-date-picker
-              v-model="selectInstall.htInstallPlanDate"
-              type="date"
-              placeholder="选择日期">
-            </el-date-picker>
+            <el-input-number v-model="selectInstall.htInstallPlanDate" :min="30"></el-input-number>(天)
           </el-form-item>
         </el-col>
         <el-col :sm="6">
@@ -167,7 +163,7 @@
           projectName: ''
         },
         selectInstall: {
-          pNum: '',
+          pnum: '',
           htInstallNum: '',
           htInstallLiftCount: '',
           htInstallDate: '',
@@ -176,9 +172,9 @@
           htInstallLiftCompany: '',
           htInstallMoney: '',
           htInstallState: '',
-          htInstallFirstRate: '',
-          htInstallSecondRate: '',
-          htInstallThirdRate: '',
+          htInstallFirstRate: '20',
+          htInstallSecondRate: '50',
+          htInstallThirdRate: '30',
           htInstallFirstM: '',
           htInstallSecondM: '',
           htInstallThirdM: '',
@@ -205,7 +201,24 @@
       backGo() {
         this.$router.go(-1)
       },
-      keepSave(){},
+      computedDPrice(){
+        this.selectInstall.htInstallFirstM=this.selectInstall.htInstallMoney*this.selectInstall.htInstallFirstRate/100;
+        this.selectInstall.htInstallSecondM=this.selectInstall.htInstallMoney*this.selectInstall.htInstallSecondRate/100;
+        this.selectInstall.htInstallThirdM=this.selectInstall.htInstallMoney*this.selectInstall.htInstallThirdRate/100;
+      },
+      keepSave(){
+        console.log(this.selectInstall);
+        this.$confirm('确认保存该合同信息吗？','提示').then(_=>{
+          axios.post('insertInstallHt',this.selectInstall).then(res=>{
+            if(res.data==1){
+              this.$message.success('保存成功');
+              this.$router.go(-1)
+            }else{
+              this.$message.error('出现意外，请刷新页面后重试')
+            }
+          })
+        })
+      },
       cancelSave(){}
     }
   }

@@ -4,9 +4,17 @@
       <el-page-header @back="backGo" content="公告列表"></el-page-header>
     </div>
     <el-divider></el-divider>
+    <div style="margin-bottom: 20px">
+      <el-row :gutter="20">
+        <el-col :sm="6" :offset="18">
+          <el-input style="width: 250px" v-model="content" placeholder="请输入需要查询的内容"></el-input>
+          <el-button @click="searchByContent" type="primary">搜索</el-button>
+        </el-col>
+      </el-row>
+    </div>
     <el-table :data="notices" height="650" border>
       <el-table-column fixed type="index" width="50" label="序号"></el-table-column>
-<!--      <el-table-column fixed prop="noticeId" label="公告ID"></el-table-column>-->
+      <!--      <el-table-column fixed prop="noticeId" label="公告ID"></el-table-column>-->
       <el-table-column fixed prop="noticeName" sortable label="公告标题"></el-table-column>
       <el-table-column prop="noticeContent" label="公告内容"></el-table-column>
       <el-table-column prop="noticeDate" label="发布时间" sortable>
@@ -21,9 +29,9 @@
     </el-table>
     <div class="create-btn">
       <el-row>
-       <el-col :span="2" :offset="22">
-         <el-button @click="saveNotice" type="info">新建公告</el-button>
-       </el-col>
+        <el-col :span="2" :offset="22">
+          <el-button @click="saveNotice" type="info">新建公告</el-button>
+        </el-col>
       </el-row>
     </div>
 
@@ -35,11 +43,11 @@
       ref="Drawer">
       <div class="drawer-body">
         <el-form ref="myForm" :rules="rules" :model="selectNot">
-          <el-form-item label="公告标题">
-            <el-input v-model="selectNot.noticeName"></el-input>
+          <el-form-item label="公告标题" prop="noticeName">
+            <el-input style="width: 300px" v-model="selectNot.noticeName"></el-input>
           </el-form-item>
-          <el-form-item label="公告内容">
-            <el-input v-model="selectNot.noticeContent"></el-input>
+          <el-form-item label="公告内容" prop="noticeContent">
+            <el-input type="textarea" style="width: 300px" v-model="selectNot.noticeContent"></el-input>
           </el-form-item>
         </el-form>
         <el-button @click="cancelForm">取消</el-button>
@@ -56,28 +64,42 @@
     name: "NoticeList",
     data() {
       return {
+        content: '',
         drawer: false,
         notices: [],
-        loading:false,
-        timer:null,
+        loading: false,
+        timer: null,
         selectNot: {
-          noticeId:'',
+          noticeId: '',
           noticeName: '',
           noticeContent: ''
         },
-        rules:{
-          noticeName:[{required:true,message:'请输入公告标题',trigger:'blur'}],
-          noticeContent:[{required:true,message:'请输入公告标题',trigger:'blur'}]
+        rules: {
+          noticeName: [{required: true, message: '请输入公告标题', trigger: 'blur'}],
+          noticeContent: [{required: true, message: '请输入公告内容', trigger: 'blur'}]
         }
       }
     },
     methods: {
-      backGo(){
+      searchByContent() {
+        if (this.content == null) {
+          this.refreshNotices()
+          this.$message.success('查询所有公告成功')
+        }else{
+          axios.post('searchNoticeByContent', this.content).then(res => {
+            this.notices = res.data
+            this.$message.success('查询成功')
+            this.content=null
+          })
+        }
+
+      },
+      backGo() {
         this.$router.go(-1)
       },
-      refreshNotices(){
-        axios.get('findAllNotice').then(res=>{
-          this.notices=res.data
+      refreshNotices() {
+        axios.get('findAllNotice').then(res => {
+          this.notices = res.data
         })
       },
       saveNotice() {
@@ -86,27 +108,27 @@
       handleDelete(index, row) {
         console.log(index, row);
         const sNo = row;
-        this.$confirm('此操作将删除该记录，是否继续？','提示',{
-          confirmButtonText:'确定',
+        this.$confirm('此操作将删除该记录，是否继续？', '提示', {
+          confirmButtonText: '确定',
           cancelButtonText: '取消',
-          type:'warning'
-        }).then(()=>{
-          axios.post('deleteNotice',sNo.noticeId).then(_=>{
-            this.notices.splice(index,1);
+          type: 'warning'
+        }).then(() => {
+          axios.post('deleteNotice', sNo.noticeId).then(_ => {
+            this.notices.splice(index, 1);
             this.$message({
               type: "success",
               message: '删除成功！'
             })
-          }).catch(_=>{
+          }).catch(_ => {
             this.$message({
-              type :"error",
+              type: "error",
               message: '删除失败！'
             })
           })
-        }).catch(()=>{
+        }).catch(() => {
           this.$message({
-            type:"info",
-            message:'已取消删除'
+            type: "info",
+            message: '已取消删除'
           })
         })
 
@@ -115,33 +137,33 @@
         if (this.loading) {
           return;
         }
-        this.$confirm('确定提交表单吗？').then(_ =>{
-          this.loading=true;
+        this.$confirm('确定提交表单吗？').then(_ => {
+          this.loading = true;
           let saveMes = null;
-          axios.post('insertNotice',this.selectNot).then(res=>{
+          axios.post('insertNotice', this.selectNot).then(res => {
             saveMes = res.data
           });
 
-          this.timer = setTimeout(()=>{
+          this.timer = setTimeout(() => {
             done();
-            setTimeout(()=>{
-              this.loading=false;
+            setTimeout(() => {
+              this.loading = false;
               this.$message({
-                type:"success",
-                message:saveMes
+                type: "success",
+                message: saveMes
               });
               this.refreshNotices()
               this.$refs.MyForm.resetFields()
-            },400)
-          },1000)
-        }).catch(_=>{
+            }, 400)
+          }, 1000)
+        }).catch(_ => {
 
         })
 
       },
-      cancelForm(){
-        this.loading=false;
-        this.drawer=false;
+      cancelForm() {
+        this.loading = false;
+        this.drawer = false;
         clearTimeout(this.timer)
       }
     },
@@ -152,10 +174,11 @@
 </script>
 
 <style lang="stylus" scoped>
-  .el-input{
+  .el-input {
     width 400px
   }
-  .drawer-body{
+
+  .drawer-body {
     align-items center
   }
 </style>

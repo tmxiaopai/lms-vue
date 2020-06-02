@@ -14,7 +14,7 @@
       <el-form-item>
         <el-col :span="12">
           <el-form-item prop="captcha">
-            <el-input type="test" v-model="loginForm.captcha" placeholder="验证码, 单击图片刷新"
+            <el-input type="test" v-model="loginForm.captcha" placeholder="验证码, 单击图片刷新" @keyup.enter.native="login"
                       style="width: 100%;">
             </el-input>
           </el-form-item>
@@ -28,7 +28,7 @@
       </el-form-item>
       <el-form-item style="width:100%;">
         <el-button type="primary" style="width:48%;" @click="reset">重 置</el-button>
-        <el-button type="primary" style="width:48%;" @click="login" :loading="loading" :disabled="false">登 录</el-button>
+        <el-button type="primary" style="width:48%;" @click="login('loginForm')" :loading="loading" :disabled="false">登 录</el-button>
       </el-form-item>
     </el-form>
   </div>
@@ -57,38 +57,49 @@
           password: [
             {required: true, message: '请输入密码', trigger: 'blur'},
             {min: 5, max: 15, message: '长度在 5 到 15 个字符', trigger: 'blur'}
+          ],
+          captcha: [
+            {required: true, message: '请输入验证码', trigger: 'blur'},
+            {min: 5, max: 5, message: '输入的验证码长度异常', trigger: 'blur'}
           ]
         }
       }
     },
     methods: {
-      login() {
-        this.loading = true
-        let userInfo = {
-          userNum: this.loginForm.userNum,
-          password: this.loginForm.password,
-          captcha: this.loginForm.captcha
-        }
-        axios.post('/login', userInfo).then((res) => {
-          console.log(res.data);
-          if (res.data.msg != "登录成功") {
-            this.loading = false
-            this.$message({message: res.data.msg, type: 'error'})
-          } else {
-            this.$message({
-              type: "success",
-              message: res.data.msg
+      login(name) {
+        this.$refs[name].validate((valid)=>{
+          if(valid){
+            this.loading = true
+            let userInfo = {
+              userNum: this.loginForm.userNum,
+              password: this.loginForm.password,
+              captcha: this.loginForm.captcha
+            }
+            axios.post('/login', userInfo).then((res) => {
+              console.log(res.data);
+              if (res.data.msg != "登录成功") {
+                this.loading = false
+                this.$message({message: res.data.msg, type: 'error'})
+              } else {
+                this.$message({
+                  type: "success",
+                  message: res.data.msg
+                })
+                Cookies.set('token', res.data.token) //设置cookie中的token
+                sessionStorage.setItem('userNum', res.data.user.userNum)//保存本地内容
+                sessionStorage.setItem('userName', res.data.user.userName)
+                sessionStorage.setItem('user',res.data.user)
+                sessionStorage.setItem('userId', res.data.user.userId)
+                sessionStorage.setItem('token', res.data.token)
+                sessionStorage.setItem('role',res.data.role)
+                this.$store.commit('menuRouteLoaded', false)//重新加载导航菜单
+                this.$router.push('/home')
+              }
+              this.loading = false
             })
-            Cookies.set('token', res.data.token) //设置cookie中的token
-            sessionStorage.setItem('userNum', res.data.user.userNum)//保存本地内容
-            sessionStorage.setItem('userName', res.data.user.userName)
-            sessionStorage.setItem('userId', res.data.user.userId)
-            sessionStorage.setItem('token', res.data.token)
-            sessionStorage.setItem('role',res.data.role)
-            this.$store.commit('menuRouteLoaded', false)//重新加载导航菜单
-            this.$router.push('/home')
+          }else{
+            return false
           }
-          this.loading = false
         })
       },
       reset() {

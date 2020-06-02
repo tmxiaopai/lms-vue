@@ -4,9 +4,21 @@
       <el-page-header @back="backGo" content="拜访计划"></el-page-header>
     </div>
     <el-divider></el-divider>
+    <div style="margin-bottom: 20px">
+      <el-row :gutter="20">
+        <el-col :sm="6" :offset="18">
+          <el-select clearable v-model="projectNum" placeholder="请选择要查询的项目">
+            <el-option v-for="item in projects" :key="item.projectNum" :label="item.projectName"
+                       :value="item.projectNum"></el-option>
+          </el-select>
+          <el-button @click="searchByProject" type="primary">搜索</el-button>
+        </el-col>
+      </el-row>
+    </div>
+
     <el-table :data="visits" style="width: 100%;text-align: center" height="650" border>
       <el-table-column fixed type="index" width="50" label="序号"></el-table-column>
-      <el-table-column fixed prop="pnum" width="150" label="项目编号" sortable></el-table-column>
+      <el-table-column fixed prop="pNum" width="150" label="项目编号" sortable></el-table-column>
       <el-table-column fixed prop="sendMan" width="200" label="业务员" sortable></el-table-column>
       <el-table-column prop="visitDate" width="120" label="采访时间">
         <template slot-scope="scope">{{scope.row.visitDate | dateFormat1}}</template>
@@ -54,7 +66,7 @@
             </el-select>
           </el-form-item>
           <el-form-item label="拜访内容">
-            <el-input type="textarea" :rows="3" v-model="selectVis.content"></el-input>
+            <el-input type="textarea" :rows="3" style="width: 300px" v-model="selectVis.content"></el-input>
           </el-form-item>
           <el-form-item label="拜访时间">
             <el-date-picker
@@ -87,7 +99,7 @@
             <el-input v-model="selectVis.receiveMan"></el-input>
           </el-form-item>
           <el-form-item label="拜访结果">
-            <el-input type="textarea"  v-model="selectVis.result"></el-input>
+            <el-input type="textarea" style="width: 300px" v-model="selectVis.result"></el-input>
           </el-form-item>
           <el-form-item label="项目进度">
             <el-select v-model="selectVis.degree">
@@ -122,9 +134,11 @@
     data() {
       return {
         visits: [],
+        projectNum:'',
         selectVis: {
+          projects:[],
           visitId: '',
-          pnum: '',
+          pNum: '',
           sendMan: '',
           visitDate: '',
           receiveMan: '',
@@ -144,6 +158,14 @@
       }
     },
     methods: {
+      searchByProject(){
+        if(this.projectNum == null){this.refreshPlan()}
+        axios.post('searchVisitByProject',this.projectNum).then(res=>{
+          this.visits=res.data
+          this.$message.success('查询成功')
+          this.projectNum=null
+        })
+      },
       backGo: function () {
         this.$router.go(-1)
       },
@@ -233,6 +255,9 @@
     },
     mounted() {
       this.refreshPlan()
+      axios.get('findAllProjectName').then(res => {
+        this.projects = res.data
+      })
     }
   }
 </script>

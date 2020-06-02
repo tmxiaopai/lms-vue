@@ -4,6 +4,46 @@
       <el-page-header @back="backGo" content="项目列表"></el-page-header>
     </div>
     <el-divider></el-divider>
+    <el-form ref="searchForm" :model="selectPro1" label-width="90px">
+      <el-row>
+        <el-col :sm="5">
+          <el-form-item label="项目名称" prop="projectName">
+            <el-input class="search-in"  v-model="selectPro1.projectName"></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col :sm="5">
+          <el-form-item label="客户名称" prop="customerName">
+            <el-input class="search-in" v-model="selectPro1.customerName"></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col :sm="5">
+          <el-form-item label="项目状态" prop="projectStatus">
+            <el-select class="search-in" placeholder="请选择项目状态" v-model="selectPro1.projectStatus">
+              <el-option label="无" value=""></el-option>
+              <el-option label="洽谈中" value="洽谈中"></el-option>
+              <el-option label="初步沟通" value="初步沟通"></el-option>
+              <el-option label="现场勘察" value="现场勘察"></el-option>
+              <el-option label="协商洽谈" value="协商洽谈"></el-option>
+              <el-option label="合同签订" value="合同签订"></el-option>
+            </el-select>
+          </el-form-item>
+        </el-col>
+        <el-col :sm="5">
+          <el-form-item label="合作意向" prop="projectIntention">
+            <el-select class="search-in"  placeholder="请选择合作意向"
+                       v-model="selectPro1.projectIntention">
+              <el-option label="有合作意向" value="有合作意向"></el-option>
+              <el-option label="意向不明确" value="意向不明确"></el-option>
+            </el-select>
+          </el-form-item>
+        </el-col>
+        <el-col :sm="2">
+          <el-button type="primary" @click="searchProject">Search</el-button>
+        </el-col>
+      </el-row>
+    </el-form>
+
+
     <el-table :data="projects" style="width: 100%;text-align: center" height="650" border>
       <el-table-column fixed type="index" width="50" label="序号"></el-table-column>
       <el-table-column fixed prop="projectNum" width="150" label="项目编号" sortable></el-table-column>
@@ -14,17 +54,18 @@
       <el-table-column prop="needCount" width="105" label="需求数量" sortable></el-table-column>
       <el-table-column prop="projectStatus" width="105" label="项目状态" sortable></el-table-column>
       <el-table-column prop="salesman" label="销售人员"></el-table-column>
-<!--      <el-table-column prop="projectDesignDate" label=登记日期" sortable>-->
-<!--        <template slot-scope="scope" v-if="scope.row" >{{scope.row.projectDesignDate | dateFormat}}</template>-->
-<!--      </el-table-column>-->
+      <!--      <el-table-column prop="projectDesignDate" label=登记日期" sortable>-->
+      <!--        <template slot-scope="scope" v-if="scope.row" >{{scope.row.projectDesignDate | dateFormat
+      }}</template>-->
+      <!--      </el-table-column>-->
       <el-table-column prop="customerName" width="140" label="客户名称" sortable></el-table-column>
       <el-table-column prop="customerMan" width="105" label="客户负责人"></el-table-column>
       <el-table-column prop="customerJob" label="职务"></el-table-column>
       <el-table-column prop="customerContact" width="120" label="联系方式"></el-table-column>
       <el-table-column prop="customerEmail" width="120" label="客户邮箱"></el-table-column>
-      <el-table-column prop="bank" width="150"  label="开户行"></el-table-column>
+      <el-table-column prop="bank" width="150" label="开户行"></el-table-column>
       <el-table-column prop="bankName" label="开户名"></el-table-column>
-      <el-table-column prop="card" width="130"  label="卡号"></el-table-column>
+      <el-table-column prop="card" width="130" label="卡号"></el-table-column>
       <el-table-column prop="pDescription" label="项目备注"></el-table-column>
       <el-table-column label="操作" width="150" fixed="right">
         <template slot-scope="scope">
@@ -52,7 +93,10 @@
       <div class="drawer-body">
         <el-form ref="myForm" :model="selectPro" label-width="80px">
           <el-form-item label="合作意向">
-            <el-input v-model="selectPro.projectIntention"></el-input>
+            <el-select placeholder="请选择合作意向" v-model="selectPro.projectIntention">
+              <el-option label="有合作意向" value="有合作意向"></el-option>
+              <el-option label="意向不明确" value="意向不明确"></el-option>
+            </el-select>
           </el-form-item>
           <el-form-item label="项目描述">
             <el-input v-model="selectPro.pDescription"></el-input>
@@ -118,20 +162,41 @@
           card: '',
           projectDesignDate: ''
         },
+        selectPro1: {
+          projectNum: '',
+          projectName: '',
+          projectType: '',
+          projectAddress: '',
+          projectIntention: '',
+          needCount: '',
+          projectStatus: '',
+          pDescription: '',
+          salesman: '',
+          customerName: '',
+          customerMan: '',
+          customerJob: '',
+          customerContact: '',
+          customerEmail: '',
+          bank: '',
+          bankName: '',
+          card: '',
+          projectDesignDate: ''
+        },
 
       }
     },
     methods: {
-      backGo(){
+      searchProject() {
+        axios.post('searchProject', this.selectPro1).then(res => {
+          this.projects = res.data
+          console.log(res.data);
+          this.$message.success('查询成功')
+          this.$refs.searchForm.resetFields()
+        })
+      },
+      backGo() {
         this.$router.go(-1)
       },
-      // dateFormat:function(row,column){
-      //   const date = row[column.property];
-      //   if(date === undefined){
-      //     return ''
-      //   } ;
-      //   return moment(date).format("YYYY-MM-DD HH:mm:ss")
-      // },
       refreshProjectList() {
         axios.get('findAllProject').then(res => {
           this.projects = res.data;
@@ -149,13 +214,13 @@
           type: 'warning'
         }).then(() => {
           axios.post('deleteProject', row.projectNum).then(res => {
-            if(res.data===1){
+            if (res.data === 1) {
               this.$message({
                 type: 'success',
                 message: '删除成功'
               });
               this.projects.splice(index, 1);
-            }else{
+            } else {
               this.$message({
                 type: 'error',
                 message: '删除失败'
@@ -188,18 +253,22 @@
                 message: res.data
               });
               done();
-              this.loadingF = false
+              this.loadingF = false;
+              this.$refs.myForm.resetFields()
             }).catch(error => {
               this.$message({
                 type: "error",
                 message: '修改失败，请刷新页面'
               })
+              this.$refs.myForm.resetFields()
             })
           });
       },
       cancelUpdate() {
         this.loadingF = false;
-        this.updateF = false
+        this.updateF = false;
+        this.$refs.myForm.resetFields();
+        this.$refs.searchForm.resetFields()
       }
     },
     mounted() {
@@ -211,5 +280,9 @@
 <style lang="stylus" scoped>
   .el-input {
     width 400px
+  }
+
+  .search-in {
+    width 200px
   }
 </style>

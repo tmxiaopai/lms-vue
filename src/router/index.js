@@ -93,7 +93,46 @@ const router = new Router({
           name: 'StockInOut',
           component: ()=>import('../views/StockInOut')
         },
-
+        {
+          path: '/13',
+          name: 'InstallList',
+          component: ()=>import('../views/InstallList')
+        },
+        {
+          path: '/14',
+          name: 'CreateReceiveMoney',
+          component: ()=>import('../views/CreateReceiveMoney')
+        },
+        {
+          path: '/15',
+          name: 'OkMoney',
+          component: ()=>import('../views/OkMoney')
+        },
+        {
+          path: '/16',
+          name: 'CreateLift',
+          component: ()=>import('../views/CreateLift')
+        },
+        {
+          path: '/17',
+          name: 'DetailSaleOfProject',
+          component: ()=>import('../views/DetailSaleOfProject')
+        },
+        {
+          path: '/18',
+          name: 'RecordMa',
+          component: ()=>import('../views/RecordMa')
+        },
+        {
+          path: '/19',
+          name: 'QuotationList',
+          component: ()=>import('../views/QuotationList')
+        },
+        {
+          path: '/createQuo',
+          name: 'CreateQuo',
+          component: ()=>import('../views/CreateQuo')
+        },
         {
           path: '/createSaleHT',
           name: 'CreateSaleHT',
@@ -108,6 +147,16 @@ const router = new Router({
           path: '/createMaHT',
           name: 'CreateMaHT',
           component: () => import('../views/CreateMaHT')
+        },
+        {
+          path: '/userInfo',
+          name: 'UserInfo',
+          component: ()=>import('../views/UserInfo')
+        },
+        {
+          path: '/changePassword',
+          name: 'ChangePassword',
+          component: ()=>import('../views/ChangePassword')
         }
       ]
     }

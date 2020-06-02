@@ -6,6 +6,36 @@
 
     <el-divider></el-divider>
 
+    <el-form ref="searchForm" :model="selectHt" :ref="selectHt" label-width="90px">
+      <el-row :gutter="20">
+        <el-col :sm="5">
+          <el-form-item label="所属项目" prop="projectNum">
+            <el-select clearable v-model="selectHt.pNum" placeholder="请选择项目">
+              <el-option v-for="item in projects" :key="item.projectNum" :label="item.projectName"
+                         :value="item.projectNum"></el-option>
+            </el-select>
+          </el-form-item>
+        </el-col>
+        <el-col :sm="5">
+          <el-form-item label="合同编号" prop="htSaleNum">
+            <el-input clearable v-model="selectHt.htSaleNum" placeholder="请输入合同编号"></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col :sm="6">
+          <el-form-item label="合同状态" prop="htSaleIsFinish">
+            <el-select clearable v-model="selectHt.htSaleIsFinish" placeholder="请选择状态">
+              <el-option value="false" label="有效"></el-option>
+              <el-option value="true" label="无效"></el-option>
+            </el-select>
+          </el-form-item>
+        </el-col>
+
+        <el-col :sm="2">
+          <el-button type="primary" @click="searchHt">搜索</el-button>
+        </el-col>
+      </el-row>
+    </el-form>
+
     <el-table :data="sales" border height="650">
       <el-table-column fixed type="index" width="50" label="序号"></el-table-column>
       <el-table-column prop="pNum" label="项目编号"></el-table-column>
@@ -35,7 +65,7 @@
       <el-table-column prop="htSaleDesc" label="合同描述"></el-table-column>
       <el-table-column prop="htSaleIsFinish" label="合同状态">
         <template slot-scope="scope">
-          {{scope.row.htSaleIsFinish === true ? '完成':'未完成'}}
+          {{scope.row.htSaleIsFinish === true ? '无效':'有效'}}
         </template>
       </el-table-column>
       <el-table-column label="操作" width="150" fixed="right">
@@ -74,7 +104,13 @@
     data() {
       return {
         sales: [],
+        projects:[],
         role:'',
+        selectHt:{
+          pNum:'',
+          htSaleNum:'',
+          htSaleIsFinish:''
+        },
         selectSale: {
           htSaleNum: '',
           htSaleStartDate: '',
@@ -98,8 +134,18 @@
     },
     mounted() {
       this.refreshList()
+      axios.get('findAllProjectName').then(res => {
+        this.projects = res.data
+      })
     },
     methods: {
+      searchHt(){
+        axios.post('searchHtSaleByE',this.selectHt).then(res=>{
+          this.sales=res.data
+          this.$message.success('查询成功')
+          this.$refs.selectHt.resetFields()
+        })
+      },
       getRole(){
         const roleFlag = sessionStorage.getItem('role');
         if(roleFlag==1){this.role=true}else {this.role=false}
